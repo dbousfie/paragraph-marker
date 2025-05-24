@@ -1,106 +1,84 @@
-Syllabus Bot Template
-A copyable, modular bot for answering syllabus questions using OpenAI.
-Designed to embed cleanly into Brightspace, with optional Qualtrics logging.
+# Paragraph Marker Bot
 
-What It Does
+A grading assistant bot for self-evaluating student paragraphs using a structured rubric defined in `syllabus.txt`.
 
-* Accepts free-text questions
-* Uses OpenAI to generate responses from your syllabus.txt
-* Optionally logs questions and responses to a Qualtrics survey
-* Can be linked or embedded via iframe in Brightspace
+This version is optimized for use in political science and related disciplines where grading criteria are detailed and paragraph-specific.
 
-How to Use
+## What It Does
 
-**1. Fork This Repo**
-Click Fork (top-right) on GitHub to make your own copy.
+* Accepts a 250-word paragraph submission
+* Uses OpenAI to analyze paragraph structure and content
+* Applies detailed grading criteria (from `syllabus.txt`)
+* Returns structured feedback and an explicit grade (A, B, C, or D)
+* Optionally logs each query and response to Qualtrics
+* Can accept instructor-supplied feedback guidance
 
-**2. Replace the Syllabus**
-Edit `syllabus.txt` with a text verson your course content. This sent along with the student question during each request.
+## Instructor Guidance Feature
 
-**3. Customize the Interface (Optional)**
+You can prepend any student submission with instructor input using this format:
 
-* `index.html` is the standalone public bot page
-* `brightspace.html` is for embedding in Brightspace via iframe
-* You can change headers, labels, or placeholders as needed
+```
+dsb2025 - This paragraph fails to address the question logically and gives no specific examples.
 
-**4. Deploy Backend to Deno**
+In wartime, international law...
+```
+
+This guidance is only read by the bot — it does not appear in the returned feedback. The bot uses it to shape how it interprets and responds to the submission.
+
+## Setup Instructions
+
+### 1. Fork the Repository
+
+Use GitHub's "Use this template" to create your own copy.
+
+### 2. Replace the Grading Criteria
+
+Edit `syllabus.txt` with your rubric.
+
+### 3. Deploy to Deno
 
 * Go to [https://dash.deno.com](https://dash.deno.com)
-* Sign in with GitHub
-* Click "Deploy from GitHub"
-* Set `main.ts` as the entry point
-* Add environment variables under "Settings" → "Environment Variables":
+* New Project → Import from GitHub → Set `main.ts` as entry point
+* Set these environment variables:
 
 ```
-OPENAI_API_KEY         = your key  
-QUALTRICS_API_TOKEN    = optional  
-QUALTRICS_SURVEY_ID    = optional  
-QUALTRICS_DATACENTER   = optional (e.g., uwo.eu)  
-SYLLABUS_LINK          = required (Brightspace or course page link)
-```
-The syllabus link is used by the bot to append each response:
-
-```
-There may be errors in my responses; always refer to the course web page: https://your.link.here
+OPENAI_API_KEY         = your OpenAI key
+SYLLABUS_LINK          = optional course webpage URL
+QUALTRICS_API_TOKEN    = (optional)
+QUALTRICS_SURVEY_ID    = (optional)
+QUALTRICS_DATACENTER   = (optional, e.g., uwo.eu)
 ```
 
-If Qualtrics values are missing, the bot still works — it just skips logging.
+### 4. Update the Fetch URL
 
-**Required Setup in Qualtrics (optional):**
-In your Qualtrics survey:
+In `index.html`, change:
 
-* Go to Survey Flow
-* Click Add a New Element → Embedded Data
-* Add the following exact variable names:
-
-```
-responseText  
-queryText  
+```js
+fetch("https://syllabus-bot.deno.dev/", {
 ```
 
-Click Apply and Publish the survey.
+to your deployed Deno URL, e.g.:
 
-**5. Deploy Frontend to GitHub Pages**
+```js
+fetch("https://paragraph-marker.deno.dev/", {
+```
 
-* Go to your repo → Settings → Pages
-* Set source to Branch: main, Folder: root
-* Save
-* Visit:
+### 5. Enable GitHub Pages
 
-  ```
-  https://your-username.github.io/your-repo-name/
-  ```
+Settings → Pages → Source = `main` branch → root folder → Save.
+Visit `https://your-username.github.io/paragraph-marker/`
 
-This is your public bot URL.
+### 6. (Optional) Embed in Brightspace
 
-6. Add to Brightspace
+Use `brightspace.html` with an iframe that links to your deployed GitHub Pages frontend.
 
-Use the included brightspace.html file. It is styled to match Brightspace’s interface and loads your bot using an iframe.
+## Notes
 
-You only need to change the src attribute in the iframe:
+* Always returns a single grade explicitly
+* Hidden HTML comment shows Qualtrics status: `<!-- Qualtrics status: 200 -->`
+* Appends this sentence to all outputs: `This is a sample grading exercise. No grades will ever be determined by a bot.`
 
-<iframe src="https://yourusername.github.io/your-bot-repo/" width="100%" height="800px" style="border: none;"></iframe>
+## License
 
-Once updated, paste the entire contents of brightspace.html into a Brightspace HTML content item or widget.
-
-
-Notes
-
-* Brightspace loads the bot using an iframe or HTML form. For the browser to allow communication between the bot frontend and the backend (on Deno), the server must explicitly say: “It’s okay to receive requests from another domain.” This is called Cross-Origin Resource Sharing (CORS).
-* If Qualtrics logging is enabled, the response includes a hidden HTML comment like:
-  `<!-- Qualtrics status: 200 -->`
-
----
-
-Files You Need
-
-* `index.html`
-* `brightspace.html`
-* `syllabus.txt`
-* `main.ts`
-* `README.md`
-
-© Dan Bousfield, licensed under Creative Commons Attribution 4.0
+© Dan Bousfield. Licensed under Creative Commons Attribution 4.0
 [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
-
-
