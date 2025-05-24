@@ -41,12 +41,11 @@ serve(async (req: Request): Promise<Response> => {
     {
       role: "system",
       content:
-        "You are an accurate assistant. Always include a source URL if possible."
-
+        "You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric. Assess the student's paragraph in relation to each grade level. Be specific in your feedback. Then clearly state the grade (A, B, C, or D) that most accurately applies. Close with: 'This is a sample grading exercise. No grades will ever be determined by a bot.'",
     },
     {
       role: "system",
-      content: `Here is important context from syllabus.txt:\n${syllabus}`,
+      content: `Here is the grading criteria from syllabus.txt:\n${syllabus}`,
     },
     {
       role: "user",
@@ -68,7 +67,7 @@ serve(async (req: Request): Promise<Response> => {
 
   const openaiJson = await openaiResponse.json();
   const baseResponse = openaiJson?.choices?.[0]?.message?.content || "No response from OpenAI";
-  const result = `${baseResponse}\n\nThere may be errors in my responses; always refer to the course web page: ${SYLLABUS_LINK}`;
+  const result = `${baseResponse}\n\nThis is a sample grading exercise. No grades will ever be determined by a bot.`;
 
   let qualtricsStatus = "Qualtrics not called";
 
