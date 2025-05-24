@@ -22,34 +22,34 @@ serve(async (req: Request): Promise<Response> => {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
-  let body: { query: string };
+  let body;
   try {
     body = await req.json();
-  } catch {
+  } catch (_) {
     return new Response("Invalid JSON", { status: 400 });
   }
 
-  if (!OPENAI_API_KEY) {
-    return new Response("Missing OpenAI API key", { status: 500 });
+  const raw = body.query.trim();
+  let guidance = "";
+  let paragraph = raw;
+
+  if (raw.startsWith("dsb2025 -")) {
+    const split = raw.split("\n");
+    guidance = split[0].replace("dsb2025 -", "").trim();
+    paragraph = split.slice(1).join("\n").trim();
   }
 
-  const syllabus = await Deno.readTextFile("syllabus.txt").catch(() =>
-    "Error loading syllabus."
-  );
+  const syllabus = await Deno.readTextFile("syllabus.txt").catch(() => "Error loading syllabus.");
 
   const messages = [
     {
       role: "system",
       content:
-        "You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric. Assess the student's paragraph in relation to each grade level. Be specific in your feedback. Then clearly state the grade (A, B, C, or D) that most accurately applies.",
-    },
-    {
-      role: "system",
-      content: `Here is the grading criteria from syllabus.txt:\n${syllabus}`,
+        `You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric.\n\n${guidance ? `The instructor has provided this guidance: ${guidance}\n\n` : ""}Here is the grading criteria from syllabus.txt:\n${syllabus}`,
     },
     {
       role: "user",
-      content: body.query,
+      content: paragraph,
     },
   ];
 
@@ -66,8 +66,7 @@ serve(async (req: Request): Promise<Response> => {
   });
 
   const openaiJson = await openaiResponse.json();
-  const baseResponse = openaiJson?.choices?.[0]?.message?.content || "No response from OpenAI";
-  const result = `${baseResponse}\n\nThis is a sample grading exercise. No grades will ever be determined by a bot.`;
+  const result = openaiJson?.choices?.[0]?.message?.content || "No response from OpenAI";
 
   let qualtricsStatus = "Qualtrics not called";
 
@@ -98,4 +97,3 @@ serve(async (req: Request): Promise<Response> => {
     },
   });
 });
- 
