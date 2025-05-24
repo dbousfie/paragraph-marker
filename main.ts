@@ -41,7 +41,7 @@ serve(async (req: Request): Promise<Response> => {
     {
       role: "system",
       content:
-        "You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric. Assess the student's paragraph in relation to each grade level. Be specific in your feedback. Then clearly state the grade (A, B, C, or D) that most accurately applies. Close with: 'This is a sample grading exercise. No grades will ever be determined by a bot.'",
+        "You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric. Assess the student's paragraph in relation to each grade level. Be specific in your feedback. Then clearly state the grade (A, B, C, or D) that most accurately applies.",
     },
     {
       role: "system",
