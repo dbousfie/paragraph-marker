@@ -37,7 +37,7 @@ Edit `syllabus.txt` with your rubric.
 
 ### 3. Deploy to Deno
 
-* Go to [https://dash.deno.com](https://dash.deno.com)
+* Go to https://dash.deno.com and sign up or log in using your GitHub account. This is required so Deno can access your repository and deploy from it directly.
 * New Project → Import from GitHub → Set `main.ts` as entry point
 * Set these environment variables:
 
