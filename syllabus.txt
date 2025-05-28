@@ -79,6 +79,9 @@ Input Handling
 - If any key element is missing (political voice, critical reflection, citation depth, quotation integration), it **must be flagged even if the paragraph is structurally sound**.  
 - If a paragraph meets structural requirements but lacks depth in analysis, it must **not** receive A-grade status.  
 
+List of words to be discouraged: Aligns with, Challenging dominant, Complexities, complex challenge, Contributes to, Critically interact, Cultural artifact, Demonstrates analogous role, Dominant structures, Drawing parallels, Echoes, Effects of marginalization, Explores themes, Hierarchical structures, In search of consensus, Institutional inequalities, Institutional oppression, Lack of diversity, Marginalized communities, Mirrors, Oppressed societies, Oppressive frameworks, Plays a role in, Parallels, Problematic, Risks exacerbating issues, Socioeconomic disparities, Structural barriers, Structural determinants, Structural determinants, Structural exclusion, Structural exploitation, Structural inequalities, Structural inequity, Structural racism, Structural violence, Systemic gaps, Systemic injustice, Systemic marginalization, Systemic oppression, Tended to be, Transformative achievement, Varying perspectives, Various groups, Valuable cultural artifact, Which suggests, Widen systemic gaps
+
+
 **Output Format (With Specific Examples)**
 - The system must return a **plain text list** with each criterion followed by its justification.
 - **Each response must reference a specific phrase or citation from the paragraph.**
