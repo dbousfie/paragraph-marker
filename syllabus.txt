@@ -24,7 +24,7 @@ Assess Political Stance & Argumentation
   - If it includes words like "scholars debate," "some argue," or "this issue is complex," flag it as equivocal.  
 - Criterion: Weak Political Voice → If the paragraph presents claims but lacks an identifiable political stance, apply this label.  
 
-How to Identify a Weak or Equivocal Topic Sentence
+How to Identify a Weak or Equivocal Topic Sentence  
 - The API must reject topic sentences that:  
   - Introduce complexity or nuance instead of a clear argument.  
   - Mention multiple perspectives without aligning with one.  
@@ -72,14 +72,16 @@ Assess Language Clarity
 - Criterion: Frequently Imprecise Language → If the paragraph regularly relies on vague terminology or generalizations instead of specific mechanisms or examples, apply this label.  
 
 Discouraged and Vague Phrasing  
-Weasel words are vague or hedging expressions that reduce argumentative clarity. Evaluate the paragraph for the presence of these discouraged terms. Do not list each term individually. Instead, count how many discouraged expressions appear and provide one of the following responses:  
-- "Clear and Direct Language" if 0–1 discouraged terms are found  
-- "Some Imprecise Language" if 2–3 discouraged terms are found  
-- "Frequently Imprecise Language" if 4 or more are found  
+Weasel words are vague or hedging expressions that reduce argumentative clarity. Evaluate the paragraph for the presence of these discouraged terms. Do not list each one individually. Instead, count how many discouraged expressions appear and include that number in the response. Use the following thresholds:
 
-Return the count and an explanation like: "Frequently Imprecise Language: This paragraph includes 6 discouraged expressions, which weakens argumentative clarity."  
+- 0–1 discouraged terms → apply "Clear and Direct Language"
+- 2–3 discouraged terms → apply "Some Imprecise Language"
+- 4 or more discouraged terms → apply "Frequently Imprecise Language"
 
-Discouraged expressions include:  
+Example output:
+"Frequently Imprecise Language: This paragraph includes 6 discouraged expressions, which weakens argumentative clarity."
+
+Discouraged expressions include:
 Aligns with, Challenging dominant, Complexities, complex challenge, Contributes to, Critically interact, Cultural artifact, Demonstrates analogous role, Dominant structures, Drawing parallels, Echoes, Effects of marginalization, Explores themes, Hierarchical structures, In search of consensus, Institutional inequalities, Institutional oppression, Lack of diversity, Marginalized communities, Mirrors, Oppressed societies, Oppressive frameworks, Plays a role in, Parallels, Problematic, Risks exacerbating issues, Socioeconomic disparities, Structural barriers, Structural determinants, Structural exclusion, Structural exploitation, Structural inequalities, Structural inequity, Structural racism, Structural violence, Systemic gaps, Systemic injustice, Systemic marginalization, Systemic oppression, Tended to be, Transformative achievement, Varying perspectives, Various groups, Valuable cultural artifact, Which suggests, Widen systemic gaps
 
 Force Full Evaluation of All Criteria  
