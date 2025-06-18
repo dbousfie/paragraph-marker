@@ -72,6 +72,17 @@ Visit `https://your-username.github.io/paragraph-marker/`
 
 Use `brightspace.html` with an iframe that links to your deployed GitHub Pages frontend.
 
+### 7. Qualtrics Logging Setup (Optional)
+If using Qualtrics, make sure your survey contains embedded data fields:
+
+```
+responseText
+queryText
+```
+
+These will be populated by the bot. Responses will include a hidden HTML comment like:
+`<!-- Qualtrics status: 200 -->`
+
 ## Notes
 
 * Always returns a single grade explicitly
