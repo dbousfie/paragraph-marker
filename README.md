@@ -1,6 +1,6 @@
 # Paragraph Marker Bot
 
-A grading assistant bot for self-evaluating student paragraphs using a structured rubric defined in `syllabus.txt`.
+A grading assistant bot for self-evaluating student paragraphs using a structured rubric defined in `syllabus.md`.
 
 This version is optimized for use in political science and related disciplines where grading criteria are detailed and paragraph-specific.
 
@@ -8,7 +8,7 @@ This version is optimized for use in political science and related disciplines w
 
 * Accepts a 250-word paragraph submission
 * Uses OpenAI to analyze paragraph structure and content
-* Applies detailed grading criteria (from `syllabus.txt`)
+* Applies detailed grading criteria (from `syllabus.md`)
 * Returns structured feedback and an explicit grade (A, B, C, or D)
 * Optionally logs each query and response to Qualtrics
 * Can accept instructor-supplied feedback guidance
