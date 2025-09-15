@@ -39,13 +39,13 @@ serve(async (req: Request): Promise<Response> => {
     paragraph = split.slice(1).join("\n").trim();
   }
 
-  const syllabus = await Deno.readTextFile("syllabus.txt").catch(() => "Error loading syllabus.");
+  const syllabus = await Deno.readTextFile("syllabus.md").catch(() => "Error loading syllabus.");
 
   const messages = [
     {
       role: "system",
       content:
-        `You are an academic grading assistant. Use the criteria in syllabus.txt as a rubric. Provide detailed feedback and then clearly assign a grade (A, B, C, or D) based on the paragraph. Always include the final grade. End with: 'This is a sample grading exercise. No grades will ever be determined by a bot.'\n\n${guidance ? `Instructor note: ${guidance}\n\n` : ""}Grading criteria from syllabus.txt:\n${syllabus}`,
+        `You are an academic grading assistant. Use the criteria in syllabus.md as a rubric. Provide detailed feedback and then clearly assign a grade (A, B, C, or D) based on the paragraph. Always include the final grade. End with: 'This is a sample grading exercise. No grades will ever be determined by a bot.'\n\n${guidance ? `Instructor note: ${guidance}\n\n` : ""}Grading criteria from syllabus.md:\n${syllabus}`,
     },
     {
       role: "user",
