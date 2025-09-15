@@ -33,7 +33,7 @@ Use GitHub's "Use this template" to create your own copy.
 
 ### 2. Replace the Grading Criteria
 
-Edit `syllabus.txt` with your rubric.
+Edit `syllabus.md` with your rubric.
 
 ### 3. Deploy to Deno
 
