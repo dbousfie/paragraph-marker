@@ -4,7 +4,6 @@ const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 const QUALTRICS_API_TOKEN = Deno.env.get("QUALTRICS_API_TOKEN");
 const QUALTRICS_SURVEY_ID = Deno.env.get("QUALTRICS_SURVEY_ID");
 const QUALTRICS_DATACENTER = Deno.env.get("QUALTRICS_DATACENTER");
-const SYLLABUS_LINK = Deno.env.get("SYLLABUS_LINK") || "";
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -39,17 +38,17 @@ serve(async (req: Request): Promise<Response> => {
     paragraph = split.slice(1).join("\n").trim();
   }
 
-  const syllabus = await Deno.readTextFile("syllabus.md").catch(() => "Error loading syllabus.");
+  const criteria = await Deno.readTextFile("criteria.md").catch(() => "Error loading criteria.");
 
   const messages = [
     {
       role: "system",
       content:
-        `You are an academic grading assistant. Use the criteria in syllabus.md as a rubric. Provide detailed feedback and then clearly assign a grade (A, B, C, or D) based on the paragraph. Always include the final grade. End with: 'This is a sample grading exercise. No grades will ever be determined by a bot.'\n\n${guidance ? `Instructor note: ${guidance}\n\n` : ""}Grading criteria from syllabus.md:\n${syllabus}`,
+        `${criteria}\n\n${guidance ? `Instructor note: ${guidance}\n\n` : ""}Respond ONLY with valid JSON. No markdown fences, no preamble.`,
     },
     {
       role: "user",
-      content: paragraph,
+      content: `Analyze this paragraph:\n\n${paragraph}`,
     },
   ];
 
@@ -62,11 +61,12 @@ serve(async (req: Request): Promise<Response> => {
     body: JSON.stringify({
       model: "gpt-4o",
       messages,
+      response_format: { type: "json_object" },
     }),
   });
 
   const openaiJson = await openaiResponse.json();
-  const result = openaiJson?.choices?.[0]?.message?.content || "No response from OpenAI";
+  const result = openaiJson?.choices?.[0]?.message?.content || '{"error": "No response from OpenAI"}';
 
   let qualtricsStatus = "Qualtrics not called";
 
@@ -90,9 +90,9 @@ serve(async (req: Request): Promise<Response> => {
     qualtricsStatus = `Qualtrics status: ${qt.status}`;
   }
 
-  return new Response(`${result}\n<!-- ${qualtricsStatus} -->`, {
+  return new Response(result, {
     headers: {
-      "Content-Type": "text/plain",
+      "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
   });
