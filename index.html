@@ -3,27 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Self Grade your Weekly Paragraphs</title>
+  <title>Paragraph Writing Patterns Analyzer</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Lato', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       color: #202122;
       margin: 0;
       padding: 10px;
+      background: #fff;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 820px;
       margin: auto;
     }
 
-    h2, h3 {
+    h2 {
       font-weight: 700;
       color: #202122;
       margin-top: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
+      font-size: 18px;
+    }
+
+    .intro-text {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 14px;
+      line-height: 1.5;
     }
 
     label {
@@ -40,50 +49,69 @@
 
     textarea {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       resize: vertical;
+      line-height: 1.6;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
     }
 
     button {
       background-color: #006fbf;
       color: #fff;
       border: none;
-      padding: 8px 16px;
+      padding: 8px 18px;
       font-size: 14px;
       cursor: pointer;
       border-radius: 4px;
-      margin-top: 10px;
     }
 
     button:hover {
       background-color: #005a9e;
     }
 
-    form {
-      margin-bottom: 20px;
+    button.secondary {
+      background: #e8e8e8;
+      color: #444;
     }
 
-    #response {
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 4px;
-      min-height: 100px;
-      background-color: #f9f9f9;
-      white-space: pre-wrap;
+    button.secondary:hover {
+      background: #d8d8d8;
+    }
+
+    .sample-link {
+      font-size: 12px;
+      color: #006fbf;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-left: 8px;
+    }
+
+    .loading-area {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      text-align: center;
+      color: #666;
     }
 
     .spinner {
-      display: none;
-      border: 4px solid rgba(0, 0, 0, 0.1);
+      border: 3px solid rgba(0,0,0,0.1);
       border-radius: 50%;
-      border-top: 4px solid #202122;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      margin-left: 10px;
+      border-top: 3px solid #006fbf;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
       vertical-align: middle;
+      margin-right: 10px;
     }
 
     @keyframes spin {
@@ -91,100 +119,361 @@
       100% { transform: rotate(360deg); }
     }
 
-    .loading-text {
+    #results {
       display: none;
-      font-size: 13px;
-      color: #666;
-      margin-top: 10px;
+      margin-top: 24px;
     }
 
-    p {
-      margin-top: 8px;
-      margin-bottom: 8px;
+    .legend-bar {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .legend-bar span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-hedging { background: #D4A017; }
+    .dot-negative { background: #C0392B; }
+    .dot-ifnot { background: #5B8C5A; }
+    .dot-generic { background: #2E6DA4; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      margin-bottom: 14px;
+      margin-top: 4px;
+    }
+
+    .sentence-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+
+    .sentence-num {
+      font-size: 15px;
+      font-weight: 700;
+      color: #999;
+      min-width: 28px;
+      text-align: right;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .sentence-content {
+      flex: 1;
+    }
+
+    .sentence-text {
+      font-size: 15px;
+      line-height: 1.65;
+      color: #202122;
+      margin-bottom: 6px;
+    }
+
+    .hl-hedging {
+      background: rgba(212, 160, 23, 0.25);
+      border-radius: 2px;
+      padding: 1px 2px;
+    }
+
+    .hl-negative {
+      background: rgba(192, 57, 43, 0.18);
+      border-bottom: 2px solid #C0392B;
+      padding: 1px 2px;
+    }
+
+    .hl-ifnot {
+      background: rgba(91, 140, 90, 0.2);
+      border-bottom: 2px solid #5B8C5A;
+      padding: 1px 2px;
+    }
+
+    .hl-generic {
+      background: rgba(46, 109, 164, 0.15);
+      border-bottom: 2px solid #2E6DA4;
+      padding: 1px 2px;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    .tag-hedging { background: rgba(212, 160, 23, 0.15); color: #8B6914; }
+    .tag-negative { background: rgba(192, 57, 43, 0.12); color: #922B21; }
+    .tag-ifnot { background: rgba(91, 140, 90, 0.15); color: #3D6B3C; }
+    .tag-generic { background: rgba(46, 109, 164, 0.12); color: #1E4D72; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      margin: 28px 0 20px;
+    }
+
+    .totals-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .totals-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .total-card {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px 16px;
+      border-radius: 6px;
+    }
+
+    .total-card .num {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .total-card .label {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.3;
+    }
+
+    .tc-hedging { background: rgba(212, 160, 23, 0.1); }
+    .tc-hedging .num { color: #8B6914; }
+    .tc-negative { background: rgba(192, 57, 43, 0.08); }
+    .tc-negative .num { color: #922B21; }
+    .tc-ifnot { background: rgba(91, 140, 90, 0.1); }
+    .tc-ifnot .num { color: #3D6B3C; }
+    .tc-generic { background: rgba(46, 109, 164, 0.08); }
+    .tc-generic .num { color: #1E4D72; }
+
+    .summary-prose {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #202122;
+    }
+
+    .summary-prose strong { font-weight: 700; }
+    .summary-prose p { margin: 0 0 14px; }
+
+    .error-msg {
+      color: #C0392B;
+      font-size: 14px;
+      margin-top: 12px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Self Grade your weekly paragraph submissions here</h2>
-    <h1>Essay Grading Criteria</h1>
+    <h2>Paragraph Writing Patterns Analyzer</h2>
+    <p class="intro-text">
+      Paste a paragraph below. The tool will break it into sentences and assess each one for hedging language,
+      negative framing, if-not-X-then-Y structures, and lack of specificity — with evidence and counts.
+    </p>
 
-    <h2>A Grade Criteria</h2>
-    <p>1. Topic sentence explicitly states a political stance or argument that goes beyond mere description.</p>
-    <p>2. Paragraph has three clearly defined arguments, each tied to a distinct academic source (with page numbers) and followed by the student’s own critical reflection explaining why the point matters.</p>
-    <p>3. Writing shows clear political voice—meaning it does not equivocate, but positions itself concretely.</p>
-    <p>4. Logical progression ties each argument to the overarching thesis.</p>
-    <p>5. Concluding sentence restates the political stance and signals how it leads to the next paragraph.</p>
-    <p>6. Includes minimal phrasing or concepts from the weasel word list below.</p>
-    <p>7. All items must be present to award A.</p>
+    <label for="input">Enter your paragraph:</label>
+    <textarea id="input" rows="6" placeholder="Paste your paragraph here..."></textarea>
 
-    <h2>B Grade Criteria</h2>
-    <p>8. Topic sentence identifies a general political perspective but is less forceful (some equivocation or broadness).</p>
-    <p>9. Lists major arguments but may be missing either the “why it matters” piece or a fully distinct stance.</p>
-    <p>10. Three sources are cited, but at least one citation lacks a page number.</p>
-    <p>11. Concluding sentence is broad or vaguely restates the topic without a strong "so what?".</p>
-    <p>12. Language is mostly formal but occasionally lapses into description or summary.</p>
-    <p>13. Includes some phrasing or concepts from the weasel word list below.</p>
-    <p>14. Assign B if at least one A-level requirement is missing but the paragraph remains on-topic and academically focused.</p>
+    <div class="btn-row">
+      <button id="analyzeBtn">Analyze</button>
+      <button class="secondary" id="clearBtn">Clear</button>
+      <span class="sample-link" id="loadSample">Load sample paragraph</span>
+    </div>
 
-    <h2>C Grade Criteria</h2>
-    <p>15. Paragraph is generally relevant, but the political stance is unclear, weak, or lost in description.</p>
-    <p>16. Arguments lack sufficient evidence or reflection on why those arguments matter; citations are incomplete (e.g., missing page numbers for multiple sources or unclear attribution).</p>
-    <p>17. Sentences are disconnected from a unifying political thesis or remain purely descriptive.</p>
-    <p>18. No clear signposts or concluding statement that reiterates a stance.</p>
-    <p>19. Includes many of the phrases or concepts from the weasel word list below.</p>
-    <p>20. Assign C if the paragraph is missing multiple B-level elements or fails to make a definite claim.</p>
+    <div class="loading-area" id="loadingArea">
+      <div class="spinner"></div>
+      <span>Analyzing paragraph, please wait...</span>
+    </div>
 
-    <h2>D Grade Criteria</h2>
-    <p>21. No discernible political stance or significance—fully neutral or purely descriptive.</p>
-    <p>22. No coherent structure or progression: it jumps between unrelated points.</p>
-    <p>23. No academic citations or citations are extremely vague (e.g., references to “a lecture,” “a textbook,” or missing author names).</p>
-    <p>24. Language is informal, relies on clichés, or provides no sense of why the topic matters.</p>
-    <p>25. Contains many of the phrases or concepts from the weasel word list below to the extent that it reduces clarity.</p>
-    <p>26. Assign D if the paragraph fails to demonstrate any of the A/B/C requirements.</p>
+    <div class="error-msg" id="errorMsg" style="display:none"></div>
 
-    <p>Sample paragraph for testing: Gender has a significant influence on consumer goods, influencing everything from marketing tactics to product design. As discussed in Chapter 9, the consumer market is deeply gendered, with industries often targeting men and women using rigid and stereotypical frameworks that reinforce binary roles and behaviours. Lesson 9 emphasizes how gendered advertising perpetuates the notion that some things are "naturally" suited to a particular gender, which not only affects purchase decisions but also upholds uneven power dynamics. This is evident in the so-called “pink tax,” where products marketed toward women are often more expensive than comparable items for men, despite no substantive difference in function or quality. As a result, the economy quietly penalizes female customers and monetizes gender inequalities. Furthermore, the visual world is essential; gendered imagery in advertising, which portrays men as strong and logical decision-makers and women as caregivers or beauty-conscious, promotes social norms (McGlinchey, 2022, ch. 9). This marketing ecology influences societal perception and identity formation, as well as customer behaviour. From a normative standpoint, consumer goods should move away from gendered targeting unless functionally justified (e.g., in health products). Instead, industries should prioritize inclusive and diverse representations that reflect a spectrum of identities. By doing this, outmoded conventions are questioned, equity is promoted, and a growingly diverse customer base is better served. Examining how gender is utilized to marginalize and differentiate, as well as imagining what a more inclusive consumer culture might look like, are crucial as we rethink the ethics of marketing and consuming (Lesson 9; McGlinchey, Chapter 9).McGlinchey, S. (2022). Foundations of International Relations. Bloomsbury Publishing. Chapter 9.
-</p>
+    <div id="results">
+      <div class="legend-bar">
+        <span>LEGEND</span>
+        <span><span class="legend-dot dot-hedging"></span> Hedging language</span>
+        <span><span class="legend-dot dot-negative"></span> Negative framing</span>
+        <span><span class="legend-dot dot-ifnot"></span> If-not-X-then-Y structure</span>
+        <span><span class="legend-dot dot-generic"></span> Lacks specificity / generic</span>
+      </div>
 
-    <form id="queryForm">
-      <label for="query">Enter your weekly 250 word paragraph here:</label>
-      <textarea id="query" name="query" required rows="4"></textarea>
-      <button type="submit">Submit</button>
-      <div class="spinner" id="spinner"></div>
-    </form>
+      <div class="section-label">SENTENCE-BY-SENTENCE BREAKDOWN</div>
+      <div id="sentenceBreakdown"></div>
 
-    <h3>ChatGPT Response:</h3>
-    <div id="response"></div>
-    <div class="loading-text" id="loadingText">Querying ChatGPT, please wait...</div>
+      <hr class="divider">
+
+      <div class="totals-label">TOTALS</div>
+      <div class="totals-row" id="totalsRow"></div>
+
+      <div class="summary-prose" id="summaryProse"></div>
+    </div>
   </div>
 
-  <script>
-    document.getElementById('queryForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const responseDiv = document.getElementById('response');
-      const spinner = document.getElementById('spinner');
-      const loadingText = document.getElementById('loadingText');
-      const query = document.getElementById('query').value;
+<script>
+const SAMPLE = `Israeli state policies toward Palestinians are often framed as a territorial conflict between two competing national groups. However, this framing conceals how Israeli control over Palestinian territory is structured through an integrated system of territorial governance, including settlement expansion, movement restrictions, and the fragmentation of Palestinian space across Gaza, the West Bank, and East Jerusalem (CITATION). Scholarship on settler colonialism explains that this system is not a single historical event, but an ongoing structure (Veracini, 2010; Bell & Schreiner, 2018). Beginning with the mass displacement of Palestinians in 1948 and continuing through territorial expansion and spatial fragmentation, this process operates over time rather than as a singular moment (CITATION). These conditions are reinforced through unequal legal systems, such as civil law for Israeli settlers and military law for Palestinians (Dugard & Reynolds, 2013). They are also reinforced through control over economic resources, including restrictions on land and water, which create dependency and limit Palestinian political autonomy (CITATION). While the United Nations recognizes Palestinian rights and has issued repeated resolutions condemning settlement expansion and affirming self-determination (Thakur & Weiss), these measures have not been enforced in practice. As a result, settlement growth and territorial control have continued despite international opposition (CITATION). This shows that the UN does not operate as a neutral actor, but functions within an international system that maintains existing power relations. Israel operates as a settler colonial and apartheid system sustained through the ongoing logic of elimination, the institutionalization of legal inequality, and the exercise of material control over land, labour, and resources.`;
 
-      responseDiv.innerText = '';
-      spinner.style.display = 'inline-block';
-      loadingText.style.display = 'block';
+// ── BACKEND URL — update this to your deployed Deno endpoint ──
+const API_URL = "https://paragraph-marker.deno.dev/";
 
-      try {
-        const res = await fetch("https://paragraph-marker.deno.dev/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query })
-        });
-        const text = await res.text();
-        responseDiv.innerText = text;
-      } catch (err) {
-        responseDiv.innerText = "Error: " + err.message;
-      } finally {
-        spinner.style.display = 'none';
-        loadingText.style.display = 'none';
-      }
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function highlightPhrase(sentenceText, phrase, hlClass) {
+  const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(${escaped})`, 'gi');
+  if (re.test(sentenceText)) {
+    return sentenceText.replace(re, `<span class="${hlClass}">$1</span>`);
+  }
+  return sentenceText;
+}
+
+function renderResults(data) {
+  const breakdown = document.getElementById('sentenceBreakdown');
+  const totalsRow = document.getElementById('totalsRow');
+  const summaryProse = document.getElementById('summaryProse');
+
+  const typeToClass = { hedging: 'hedging', negative: 'negative', ifnot: 'ifnot', generic: 'generic' };
+  const typeToLabel = { hedging: 'Hedging', negative: 'Negative', ifnot: 'If-not-X-then-Y', generic: 'Generic' };
+
+  let breakdownHtml = '';
+  for (const s of data.sentences) {
+    let textHtml = escHtml(s.text);
+    const sortedFlags = [...s.flags].sort((a, b) => b.phrase.length - a.phrase.length);
+    for (const f of sortedFlags) {
+      const cls = 'hl-' + (typeToClass[f.type] || f.type);
+      textHtml = highlightPhrase(textHtml, f.phrase, cls);
+    }
+
+    let tagsHtml = '';
+    if (s.flags.length > 0) {
+      tagsHtml = '<div class="tag-row">' + s.flags.map(f => {
+        const tagCls = 'tag-' + (typeToClass[f.type] || f.type);
+        const label = typeToLabel[f.type] || f.type;
+        let tagText = label;
+        if (f.phrase) tagText += ` \u2014 \u201c${escHtml(f.phrase)}\u201d`;
+        if (f.explanation) tagText += ` ${escHtml(f.explanation)}`;
+        return `<span class="tag ${tagCls}">${tagText}</span>`;
+      }).join('') + '</div>';
+    }
+
+    breakdownHtml += `
+      <div class="sentence-row">
+        <div class="sentence-num">${s.number}</div>
+        <div class="sentence-content">
+          <div class="sentence-text">${textHtml}</div>
+          ${tagsHtml}
+        </div>
+      </div>`;
+  }
+  breakdown.innerHTML = breakdownHtml;
+
+  const t = data.totals;
+  totalsRow.innerHTML = `
+    <div class="total-card tc-hedging"><div class="num">${t.hedging}</div><div class="label">Sentence${t.hedging !== 1 ? 's' : ''} with hedging language</div></div>
+    <div class="total-card tc-negative"><div class="num">${t.negative}</div><div class="label">Sentence${t.negative !== 1 ? 's' : ''} with negative framing</div></div>
+    <div class="total-card tc-ifnot"><div class="num">${t.ifnot}</div><div class="label">If-not-X-then-Y instance${t.ifnot !== 1 ? 's' : ''}</div></div>
+    <div class="total-card tc-generic"><div class="num">${t.generic}</div><div class="label">Sentence${t.generic !== 1 ? 's' : ''} lacking specificity</div></div>`;
+
+  let summaryHtml = escHtml(data.summary)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+  summaryProse.innerHTML = `<p>${summaryHtml}</p>`;
+
+  document.getElementById('results').style.display = 'block';
+}
+
+async function analyzeParagraph(text) {
+  const loadingArea = document.getElementById('loadingArea');
+  const errorMsg = document.getElementById('errorMsg');
+  const resultsDiv = document.getElementById('results');
+
+  resultsDiv.style.display = 'none';
+  errorMsg.style.display = 'none';
+  loadingArea.style.display = 'block';
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: text })
     });
-  </script>
+
+    const raw = await res.text();
+    const cleaned = raw.replace(/<!--.*?-->/g, '').trim();
+    const data = JSON.parse(cleaned);
+
+    if (data.error) throw new Error(data.error);
+    renderResults(data);
+  } catch (err) {
+    errorMsg.textContent = 'Error: ' + err.message;
+    errorMsg.style.display = 'block';
+  } finally {
+    loadingArea.style.display = 'none';
+  }
+}
+
+document.getElementById('analyzeBtn').addEventListener('click', () => {
+  const text = document.getElementById('input').value.trim();
+  if (!text) return;
+  analyzeParagraph(text);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('input').value = '';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+});
+
+document.getElementById('loadSample').addEventListener('click', () => {
+  document.getElementById('input').value = SAMPLE;
+});
+
+document.getElementById('input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    document.getElementById('analyzeBtn').click();
+  }
+});
+</script>
 </body>
 </html>
